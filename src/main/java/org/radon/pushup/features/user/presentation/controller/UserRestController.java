@@ -4,6 +4,7 @@ import org.radon.pushup.features.user.application.port.in.CreateUserUseCase;
 import org.radon.pushup.features.user.presentation.dto.UserCreateRequest;
 import org.radon.pushup.features.user.presentation.mapper.UserDtoMappers;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class UserRestController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<String> createUser(@RequestBody UserCreateRequest userCreateRequest) {
         try{
             createUserUseCase.createUser(UserDtoMappers.createUserFromDto(userCreateRequest));

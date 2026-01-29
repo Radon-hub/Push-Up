@@ -11,6 +11,7 @@ import org.radon.pushup.features.user.infrastructure.repository.entities.Authori
 import org.radon.pushup.features.user.infrastructure.repository.entities.RoleEntity;
 import org.radon.pushup.features.user.infrastructure.repository.entities.UserEntity;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserMappers {
@@ -47,6 +48,17 @@ public class UserMappers {
         );
     }
 
+    public static UserEntity fromUserToUserEntity(User user,Tenant tenant,RoleEntity roleEntity) {
+        return new UserEntity(
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getPhone(),
+                fromTenantToTenantEntity(tenant),
+                roleEntity
+        );
+    }
+
 
     public static User fromUserEntityToUser(UserEntity userEntity) {
         return new User(
@@ -59,6 +71,20 @@ public class UserMappers {
                 userEntity.getApps().stream().map(UserMappers::fromAppEntityToApp).collect(Collectors.toSet()),
                 userEntity.getCreated_at(),
                 userEntity.getUpdated_at()
+        );
+    }
+
+    public static AppEntity fromAppToAppEntity(App app) {
+        return new AppEntity(
+                app.getId(),
+                app.getApi_key(),
+                app.getName(),
+                app.getPlatform(),
+                app.getStatus(),
+                fromTenantToTenantEntity(app.getTenant()),
+                Set.of(),
+                app.getCreated_at(),
+                app.getUpdated_at()
         );
     }
 
@@ -85,6 +111,18 @@ public class UserMappers {
                 tenantEntity.getApps().stream().map(UserMappers::fromAppEntityToApp).collect(Collectors.toSet()),
                 tenantEntity.getCreated_at(),
                 tenantEntity.getUpdated_at()
+        );
+    }
+
+    public static TenantEntity fromTenantToTenantEntity(Tenant tenant) {
+        return new TenantEntity(
+                tenant.getId(),
+                tenant.getName(),
+                tenant.getStatus(),
+                tenant.getApps().stream().map(UserMappers::fromAppToAppEntity).collect(Collectors.toSet()),
+                tenant.getUsers().stream().map(UserMappers::fromUserToUserEntity).collect(Collectors.toSet()),
+                tenant.getCreated_at(),
+                tenant.getUpdated_at()
         );
     }
 
