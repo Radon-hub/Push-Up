@@ -1,0 +1,66 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/shopy-db
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+
+  # Redis configs
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 5000ms
+      lettuce:
+        shutdown-timeout: 100ms
+
+  # Hibernate dialect for PostgreSQL
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # Automatically update schema (optional)
+    hibernate:
+      ddl-auto: update
+    # Show SQL queries in logs (optional)
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Kafka event bus configurations
+  kafka:
+    bootstrap-servers: kafka:29092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.add.type.headers: false
+  web:
+    error:
+      include-message: always
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics,httptrace
+
+  # --- Basic app info ---
+  info:
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+
+  # --- Metrics tags (optional but useful) ---
+  metrics:
+    tags:
+      application: my-spring-app
+
+
+security:
+  SECRET_KEY: aljvnkjn3)n3u4nf9un9u3n59-3inon3v
+  ACCESS_TOKEN_VALIDITY_SECONDS: 300000
+  REFRESH_TOKEN_VALIDITY_SECONDS: 900000
