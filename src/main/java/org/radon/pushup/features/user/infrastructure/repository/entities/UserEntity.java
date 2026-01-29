@@ -53,4 +53,12 @@ public class UserEntity {
         this.role = role;
     }
 
+    public UserEntity(String username, String password, String email, String phone, TenantEntity tenant, RoleEntity role) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phone = phone;
+        this.tenant = tenant;
+        this.role = role;
+    }
 }
