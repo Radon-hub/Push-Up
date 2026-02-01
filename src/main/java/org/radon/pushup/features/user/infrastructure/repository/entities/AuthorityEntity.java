@@ -25,7 +25,6 @@ public class AuthorityEntity {
     @GeneratedValue
     private int id;
     private String authority;
-    @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_authority_table",

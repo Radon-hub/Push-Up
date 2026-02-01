@@ -3,21 +3,22 @@ package org.radon.pushup.features.app.domain;
 import org.radon.pushup.features.tenant.domain.Tenant;
 
 import java.sql.Timestamp;
+import java.util.Set;
 import java.util.UUID;
 
 public class App {
     private UUID id;
     private Tenant tenant;
-    private String api_key;
+    private Set<ApiKey> api_key;
     private String name;
-    private String platform;
+    private Set<Platform> platform;
     private AppStatus status;
     private Timestamp created_at;
     private Timestamp updated_at;
 
     public App() {}
 
-    public App(UUID id, Tenant tenant, String api_key, String name, String platform, AppStatus status, Timestamp created_at, Timestamp updated_at) {
+    public App(UUID id, Tenant tenant, Set<ApiKey> api_key, String name, Set<Platform> platform, AppStatus status, Timestamp created_at, Timestamp updated_at) {
         this.id = id;
         this.tenant = tenant;
         this.api_key = api_key;
@@ -44,14 +45,6 @@ public class App {
         this.tenant = tenant;
     }
 
-    public String getApi_key() {
-        return api_key;
-    }
-
-    public void setApi_key(String api_key) {
-        this.api_key = api_key;
-    }
-
     public String getName() {
         return name;
     }
@@ -60,16 +53,24 @@ public class App {
         this.name = name;
     }
 
-    public String getPlatform() {
+    public AppStatus getStatus() {
+        return status;
+    }
+
+    public Set<ApiKey> getApi_key() {
+        return api_key;
+    }
+
+    public void setApi_key(Set<ApiKey> api_key) {
+        this.api_key = api_key;
+    }
+
+    public Set<Platform> getPlatform() {
         return platform;
     }
 
-    public void setPlatform(String platform) {
+    public void setPlatform(Set<Platform> platform) {
         this.platform = platform;
-    }
-
-    public AppStatus getStatus() {
-        return status;
     }
 
     public void setStatus(AppStatus status) {

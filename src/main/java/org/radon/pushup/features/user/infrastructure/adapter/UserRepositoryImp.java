@@ -39,25 +39,17 @@ public class UserRepositoryImp implements UserRepository {
 
         Optional<UserEntity> optionalUser = userJpaRepository.findUserEntityByEmailOrPhone(user.getEmail(), user.getPhone());
 
-        Optional<TenantEntity> ownerTenant = tenantJpaRepository.findByOwnerUsersName(SecurityContextHolder.getContext().getAuthentication().getName());
+        TenantEntity ownerTenant = tenantJpaRepository.findByOwnerUsersName(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Optional<RoleEntity> roleEntity = roleJpaRepository.findByName(user.getRole().getRole());
+        RoleEntity roleEntity = roleJpaRepository.findByName(user.getRole().getRole()).orElseThrow(() -> new IllegalArgumentException("Role not found"));
 
         if (optionalUser.isPresent()) {
             throw new IllegalStateException("User already exists");
         }
 
-        if (ownerTenant.isEmpty()) {
-            throw new IllegalStateException("No tenant exists");
-        }
-
-        if (roleEntity.isEmpty()) {
-            throw new IllegalStateException("Role not found!");
-        }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        userJpaRepository.save(UserMappers.fromUserToUserEntity(user,UserMappers.fromTenantEntityToTenant(ownerTenant.get()),roleEntity.get()));
+        userJpaRepository.save(UserMappers.fromUserToUserEntity(user,ownerTenant,roleEntity));
 
         return user;
     }
