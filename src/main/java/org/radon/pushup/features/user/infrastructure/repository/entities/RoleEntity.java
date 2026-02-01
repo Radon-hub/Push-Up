@@ -22,7 +22,6 @@ public class RoleEntity {
     @GeneratedValue
     private int id;
     private String name;
-    @JsonManagedReference
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "role_authority_table",

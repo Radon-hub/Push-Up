@@ -1,5 +1,8 @@
 package org.radon.pushup.shared.aop.config;
 import jakarta.transaction.Transactional;
+import org.radon.pushup.features.app.domain.Platform;
+import org.radon.pushup.features.app.infrastructure.repository.PlatformJpaRepository;
+import org.radon.pushup.features.app.infrastructure.repository.entities.PlatformEntity;
 import org.radon.pushup.features.user.application.port.in.CreateUserUseCase;
 import org.radon.pushup.features.user.application.port.out.UserRepository;
 import org.radon.pushup.features.user.domain.User;
@@ -96,9 +99,10 @@ public class SecurityConfig {
     }
 
 
+
     @Transactional
     @Bean
-    public CommandLineRunner commandLineRunner(AuthorityJpaRepository authorityJpaRepository, RoleJpaRepository roleJpaRepository, UserJpaRepository userJpaRepository) {
+    public CommandLineRunner commandLineRunner(AuthorityJpaRepository authorityJpaRepository, RoleJpaRepository roleJpaRepository, UserJpaRepository userJpaRepository, PlatformJpaRepository platformJpaRepository) {
         return args -> {
 
             try{
@@ -111,10 +115,18 @@ public class SecurityConfig {
                     var remove = authorityJpaRepository.save(new AuthorityEntity("REMOVE"));
 
                     roleJpaRepository.save(new RoleEntity("ADMIN",Set.of(create,add,read,update,remove)));
+
                     var owner = roleJpaRepository.save(new RoleEntity("OWNER",Set.of(create,add,read,update)));
-                    roleJpaRepository.save(new RoleEntity("DEVELOPER",Set.of(add,read)));
+
+                    roleJpaRepository.save(new RoleEntity("DEVELOPER",Set.of(create,add,read)));
                     roleJpaRepository.save(new RoleEntity("ANALYST",Set.of(add,read)));
                     roleJpaRepository.save(new RoleEntity("VIEWER",Set.of(read)));
+
+                    var ios = new PlatformEntity(Platform.IOS);
+                    var android = new PlatformEntity(Platform.ANDROID);
+                    var web = new PlatformEntity(Platform.WEB);
+
+                    platformJpaRepository.saveAll(Set.of(ios,android,web));
 
                     userJpaRepository.save(new UserEntity(
                             "alireza.kh",
@@ -124,6 +136,8 @@ public class SecurityConfig {
                             owner
                     ));
 
+
+
                 }
 
             }catch (Exception ex){
@@ -132,6 +146,5 @@ public class SecurityConfig {
 
         };
     }
-
 
 }

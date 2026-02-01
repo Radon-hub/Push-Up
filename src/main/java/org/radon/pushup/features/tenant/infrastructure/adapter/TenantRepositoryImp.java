@@ -55,6 +55,10 @@ public class TenantRepositoryImp implements TenantRepository {
                 .findUserEntityByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
+        if(userEntity.getTenant() != null) {
+            throw new IllegalArgumentException("User already have tenant!");
+        }
+
         TenantEntity tenant = tenantJpaRepository.save(
                 TenantMappers.toTenantEntityFromTenant(
                         new Tenant.Builder()
