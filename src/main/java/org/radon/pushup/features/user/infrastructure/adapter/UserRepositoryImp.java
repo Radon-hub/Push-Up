@@ -11,6 +11,8 @@ import org.radon.pushup.features.user.infrastructure.repository.UserJpaRepositor
 import org.radon.pushup.features.user.infrastructure.repository.entities.RoleEntity;
 import org.radon.pushup.features.user.infrastructure.repository.entities.UserEntity;
 import org.radon.pushup.features.user.infrastructure.repository.mapper.UserMappers;
+import org.radon.pushup.shared.aop.exceptionHandling.model.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,14 +39,16 @@ public class UserRepositoryImp implements UserRepository {
     @Override
     public User createUser(User user) {
 
-        Optional<UserEntity> optionalUser = userJpaRepository.findUserEntityByEmailOrPhone(user.getEmail(), user.getPhone());
+        var ownerUser = getUserWithTenantExistence();
 
-        TenantEntity ownerTenant = tenantJpaRepository.findByOwnerUsersName(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Optional<UserEntity> optionalUser = userJpaRepository.findUserEntityByEmailOrPhoneOrUsername(user.getEmail(), user.getPhone(),user.getUsername());
 
-        RoleEntity roleEntity = roleJpaRepository.findByName(user.getRole().getRole()).orElseThrow(() -> new IllegalArgumentException("Role not found"));
+        TenantEntity ownerTenant = ownerUser.getTenant();
+
+        RoleEntity roleEntity = roleJpaRepository.findByName(user.getRole().getRole()).orElseThrow(RoleNotFoundException::new);
 
         if (optionalUser.isPresent()) {
-            throw new IllegalStateException("User already exists");
+            throw new UserExistException();
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -55,8 +59,46 @@ public class UserRepositoryImp implements UserRepository {
     }
 
     @Override
+    public User signUp(User user) {
+
+        var existedUser = userJpaRepository.findUserEntityByEmailOrPhone(user.getEmail(), user.getPhone());
+
+        if(existedUser.isPresent()){
+            throw new UserExistException();
+        }
+
+        RoleEntity roleEntity = roleJpaRepository.findByName("OWNER").orElseThrow(RoleNotFoundException::new);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        userJpaRepository.save(UserMappers.fromUserToUserEntity(user,roleEntity));
+
+        return user;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity optionalUser = userJpaRepository.findUserEntityByUsername(username).orElseThrow(() -> new IllegalStateException("Username not found"));
+        UserEntity optionalUser = userJpaRepository.findUserEntityByUsername(username).orElseThrow(UserNotFoundException::new);
         return UserMappers.fromUserEntityToUser(optionalUser);
+    }
+
+    private UserEntity getUserWithTenantExistence(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Not authenticated!");
+        }
+
+        String username = auth.getName();
+
+        UserEntity userEntity = userJpaRepository
+                .findUserEntityByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if(userEntity.getTenant() == null) {
+            throw new TenantNotFoundException();
+        }
+
+        return userEntity;
     }
 }

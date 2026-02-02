@@ -2,15 +2,17 @@ package org.radon.pushup.features.app.application.service;
 
 import org.radon.pushup.features.app.application.port.in.*;
 import org.radon.pushup.features.app.application.port.out.AppRepository;
+import org.radon.pushup.features.app.domain.ApiKey;
 import org.radon.pushup.features.app.domain.App;
 import org.radon.pushup.features.app.domain.AppStatus;
 import org.radon.pushup.features.app.domain.Platform;
+import org.radon.pushup.features.app.presentation.dto.ApiKeyResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class AppService implements CreateAppUseCase, ChangeAppStatusUseCase, GenerateApiKeyUseCase, ToggleAppPlatformUseCase , AddUserToAppUseCase  {
+public class AppService implements CreateAppUseCase, ChangeAppStatusUseCase, ToggleAppPlatformUseCase , AddUserToAppUseCase  {
 
     private final AppRepository appRepository;
 
@@ -28,10 +30,6 @@ public class AppService implements CreateAppUseCase, ChangeAppStatusUseCase, Gen
         return appRepository.updateAppStatus(appStatus, appId);
     }
 
-    @Override
-    public String generateApiKey(UUID appId) {
-        return appRepository.generateApiKey(appId);
-    }
 
     @Override
     public App toggleAppPlatform(UUID appId, Platform platform) {
@@ -42,4 +40,5 @@ public class AppService implements CreateAppUseCase, ChangeAppStatusUseCase, Gen
     public App addUserToApp(UUID appId, UUID userId) {
         return appRepository.addUserToApp(appId, userId);
     }
+
 }

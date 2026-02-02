@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public class App {
     private UUID id;
-    private Tenant tenant;
     private Set<ApiKey> api_key;
     private String name;
     private Set<Platform> platform;
@@ -18,9 +17,8 @@ public class App {
 
     public App() {}
 
-    public App(UUID id, Tenant tenant, Set<ApiKey> api_key, String name, Set<Platform> platform, AppStatus status, Timestamp created_at, Timestamp updated_at) {
+    public App(UUID id, Set<ApiKey> api_key, String name, Set<Platform> platform, AppStatus status, Timestamp created_at, Timestamp updated_at) {
         this.id = id;
-        this.tenant = tenant;
         this.api_key = api_key;
         this.name = name;
         this.platform = platform;
@@ -35,14 +33,6 @@ public class App {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public Tenant getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(Tenant tenant) {
-        this.tenant = tenant;
     }
 
     public String getName() {

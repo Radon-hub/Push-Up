@@ -1,5 +1,6 @@
 package org.radon.pushup.features.tenant.infrastructure.mapper;
 
+import org.radon.pushup.features.app.infrastructure.mapper.AppMappers;
 import org.radon.pushup.features.tenant.domain.Tenant;
 import org.radon.pushup.features.tenant.infrastructure.repository.TenantEntity;
 import org.radon.pushup.features.user.infrastructure.repository.mapper.UserMappers;
@@ -27,8 +28,8 @@ public class TenantMappers {
                 tenant.getId(),
                 tenant.getName(),
                 tenant.getStatus(),
-                Set.of(),
-                Set.of(),
+                tenant.getUsers().stream().map(UserMappers::fromUserEntityToUser).collect(Collectors.toSet()),
+                tenant.getApps().stream().map(AppMappers::toAppFromAppEntity).collect(Collectors.toSet()),
                 tenant.getCreated_at(),
                 tenant.getUpdated_at()
         );

@@ -42,12 +42,7 @@ public class AppEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tenant_id")
     private TenantEntity tenant;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "apps_users_table",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "app_id")
-    )
+    @ManyToMany(mappedBy = "apps",fetch = FetchType.EAGER)
     private Set<UserEntity> users = new HashSet<>();
     private Timestamp created_at = new Timestamp(System.currentTimeMillis());
     private Timestamp updated_at = new Timestamp(System.currentTimeMillis());
