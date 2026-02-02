@@ -49,6 +49,16 @@ public class UserMappers {
         );
     }
 
+    public static UserEntity fromUserToUserEntity(User user,RoleEntity roleEntity) {
+        return new UserEntity(
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getPhone(),
+                roleEntity
+        );
+    }
+
     public static UserEntity fromUserToUserEntity(User user,TenantEntity tenantEntity,RoleEntity roleEntity) {
         return new UserEntity(
                 user.getUsername(),
@@ -82,7 +92,21 @@ public class UserMappers {
                 app.getName(),
                 app.getPlatform().stream().map(AppMappers::toPlatformEntityFromPlatform).collect(Collectors.toSet()),
                 app.getStatus(),
-                fromTenantToTenantEntity(app.getTenant()),
+                null,
+                Set.of(),
+                app.getCreated_at(),
+                app.getUpdated_at()
+        );
+    }
+
+    public static AppEntity fromAppToAppEntity(App app,TenantEntity tenantEntity) {
+        return new AppEntity(
+                app.getId(),
+                app.getApi_key().stream().map(AppMappers::toApiKeyEntityFromApiKey).collect(Collectors.toSet()),
+                app.getName(),
+                app.getPlatform().stream().map(AppMappers::toPlatformEntityFromPlatform).collect(Collectors.toSet()),
+                app.getStatus(),
+                tenantEntity,
                 Set.of(),
                 app.getCreated_at(),
                 app.getUpdated_at()
@@ -92,7 +116,6 @@ public class UserMappers {
     public static App fromAppEntityToApp(AppEntity appEntity) {
         return new App(
                 appEntity.getId(),
-                fromTenantEntityToTenant(appEntity.getTenant()),
                 appEntity.getApi_key().stream().map(AppMappers::toApiKeyFromApiKeyEntity).collect(Collectors.toSet()),
                 appEntity.getName(),
                 appEntity.getPlatform().stream().map(AppMappers::toPlatformFromPlatformEntity).collect(Collectors.toSet()),

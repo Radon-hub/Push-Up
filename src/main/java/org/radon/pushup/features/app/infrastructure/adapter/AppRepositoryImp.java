@@ -8,62 +8,54 @@ import org.radon.pushup.features.app.infrastructure.repository.ApiKeyJpaReposito
 import org.radon.pushup.features.app.infrastructure.repository.AppJpaRepository;
 import org.radon.pushup.features.app.infrastructure.repository.PlatformJpaRepository;
 import org.radon.pushup.features.app.infrastructure.repository.entities.AppEntity;
+import org.radon.pushup.features.app.presentation.dto.ApiKeyResponse;
+import org.radon.pushup.features.tenant.infrastructure.repository.TenantEntity;
 import org.radon.pushup.features.user.infrastructure.repository.UserJpaRepository;
 import org.radon.pushup.features.user.infrastructure.repository.entities.UserEntity;
+import org.radon.pushup.shared.aop.exceptionHandling.model.*;
 import org.radon.pushup.shared.apiKeys.ApiKeyGenerator;
 import org.radon.pushup.shared.apiKeys.ApiKeyHasher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Repository
 public class AppRepositoryImp implements AppRepository {
 
     private final AppJpaRepository appJpaRepository;
     private final UserJpaRepository userJpaRepository;
-    private final ApiKeyJpaRepository apiKeyJpaRepository;
     private final PlatformJpaRepository platformJpaRepository;
 
-    public AppRepositoryImp(AppJpaRepository appJpaRepository, UserJpaRepository userJpaRepository, ApiKeyJpaRepository apiKeyJpaRepository, PlatformJpaRepository platformJpaRepository) {
+    public AppRepositoryImp(AppJpaRepository appJpaRepository, UserJpaRepository userJpaRepository, PlatformJpaRepository platformJpaRepository) {
         this.appJpaRepository = appJpaRepository;
         this.userJpaRepository = userJpaRepository;
-        this.apiKeyJpaRepository = apiKeyJpaRepository;
         this.platformJpaRepository = platformJpaRepository;
     }
-
 
 
     @Override
     public App createApp(String name) {
 
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new IllegalArgumentException("Unauthenticated");
-        }
-
-        String username = auth.getName();
-
-        UserEntity userEntity = userJpaRepository
-                .findUserEntityByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        if(userEntity.getTenant() == null) {
-            throw new IllegalArgumentException("Tenant not found!");
-        }
+        var userEntity = getUserWithTenantExistence();
 
         Optional<AppEntity> appEntity = appJpaRepository.findByNameAndTenant(name,userEntity.getTenant());
 
         if(appEntity.isPresent()) {
-            throw new IllegalArgumentException("Duplicate app name!");
+            throw new AppExistException();
         }
 
-        var savedApp = appJpaRepository.save(new AppEntity(name, userEntity.getTenant()));
+        var savedApp = appJpaRepository.save(AppMappers.toAppEntityFromApp(name,userEntity));
+
+        userEntity.getApps().add(savedApp);
+
+        userJpaRepository.save(userEntity);
 
         return AppMappers.toAppFromAppEntity(savedApp);
 
@@ -73,47 +65,34 @@ public class AppRepositoryImp implements AppRepository {
     @Override
     public App updateAppStatus(AppStatus appStatus, UUID appId) {
 
-        var app = appJpaRepository.findById(appId).orElseThrow(() -> new IllegalArgumentException("App not found"));
+        var userEntity = getUserWithTenantExistence();
+
+        var app = appJpaRepository.findById(appId).orElseThrow(AppNotFoundException::new);
+
+        if (!userEntity.getTenant().equals(app.getTenant())) {
+            throw new TenantAccessException();
+        }
 
         app.setStatus(appStatus);
+        app.setUpdated_at(new Timestamp(System.currentTimeMillis()));
 
         return AppMappers.toAppFromAppEntity(app);
 
     }
 
-    @Override
-    public String generateApiKey(UUID appId) {
-        var app = appJpaRepository.findById(appId).orElseThrow(() -> new IllegalArgumentException("App not found"));
-
-        var apiKeyPair = ApiKeyGenerator.generate();
-
-        var apiKeyPrefix = apiKeyPair.getKey();
-        
-        var apiKeyHash = apiKeyPair.getValue();
-
-        var apiKey = apiKeyPrefix + apiKeyHash;
-
-        try{
-            apiKeyHash = ApiKeyHasher.hash(apiKey);
-        }catch (Exception e){
-            throw new IllegalArgumentException("Invalid API Key!");
-        }
-
-        apiKeyJpaRepository.save(AppMappers.toApiKeyEntityFromApiKey(new ApiKey(
-                apiKeyHash,
-                apiKeyPrefix,
-                ApiKeyStatus.ACTIVE,
-                app
-        )));
-
-        return apiKey;
-    }
 
     @Override
     public App toggleAppPlatform(UUID appId, Platform platform) {
 
-        var app = appJpaRepository.findById(appId).orElseThrow(() -> new IllegalArgumentException("App not found"));
-        var platformEntity = platformJpaRepository.findByPlatform(platform).orElseThrow(() -> new IllegalArgumentException("Platform not found"));
+        var userEntity = getUserWithTenantExistence();
+
+        var app = appJpaRepository.findById(appId).orElseThrow(AppNotFoundException::new);
+
+        if (!userEntity.getTenant().equals(app.getTenant())) {
+            throw new TenantAccessException();
+        }
+
+        var platformEntity = platformJpaRepository.findByPlatform(platform).orElseThrow(PlatformNotFoundException::new);
 
         var appPlatforms = app.getPlatform();
 
@@ -122,6 +101,8 @@ public class AppRepositoryImp implements AppRepository {
         }else{
             appPlatforms.add(platformEntity);
         }
+
+        app.setUpdated_at(new Timestamp(System.currentTimeMillis()));
 
         appJpaRepository.save(app);
 
@@ -132,20 +113,46 @@ public class AppRepositoryImp implements AppRepository {
     @Override
     public App addUserToApp(UUID appId, UUID userId) {
 
-        var app = appJpaRepository.findById(appId).orElseThrow(() -> new IllegalArgumentException("App not found"));
+        var userEntity = getUserWithTenantExistence();
 
-        var user = userJpaRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        var app = appJpaRepository.findById(appId).orElseThrow(AppNotFoundException::new);
 
-        if(app.getUsers().contains(user)) {
-            throw new IllegalArgumentException("Duplicate user found!");
+        if (!userEntity.getTenant().equals(app.getTenant())) {
+            throw new TenantAccessException();
         }
 
-        user.getApps().add(app);
+        var addingUser = userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-        userJpaRepository.save(user);
+        if(app.getUsers().contains(addingUser)) {
+            throw new UserExistException();
+        }
+
+        addingUser.getApps().add(app);
+
+        userJpaRepository.save(addingUser);
 
         return AppMappers.toAppFromAppEntity(app);
     }
 
+
+    private UserEntity getUserWithTenantExistence(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Not authenticated!");
+        }
+
+        String username = auth.getName();
+
+        UserEntity userEntity = userJpaRepository
+                .findUserEntityByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if(userEntity.getTenant() == null) {
+            throw new TenantNotFoundException();
+        }
+
+        return userEntity;
+    }
 
 }

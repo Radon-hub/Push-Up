@@ -14,25 +14,22 @@ public class ApiKey {
     private String api_key;
     private String api_key_prefix;
     private ApiKeyStatus api_key_status;
-    private AppEntity app;
     private Timestamp created_at;
     private Timestamp updated_at;
 
-    public ApiKey(Long id, String api_key, String api_key_prefix, ApiKeyStatus api_key_status, AppEntity app, Timestamp created_at, Timestamp updated_at) {
+    public ApiKey(Long id, String api_key, String api_key_prefix, ApiKeyStatus api_key_status, Timestamp created_at, Timestamp updated_at) {
         this.id = id;
         this.api_key = api_key;
         this.api_key_prefix = api_key_prefix;
         this.api_key_status = api_key_status;
-        this.app = app;
         this.created_at = created_at;
         this.updated_at = updated_at;
     }
 
-    public ApiKey(String api_key, String api_key_prefix, ApiKeyStatus api_key_status, AppEntity app) {
+    public ApiKey(String api_key, String api_key_prefix, ApiKeyStatus api_key_status) {
         this.api_key = api_key;
         this.api_key_prefix = api_key_prefix;
         this.api_key_status = api_key_status;
-        this.app = app;
     }
 
     public Long getId() {
@@ -65,14 +62,6 @@ public class ApiKey {
 
     public void setApi_key_status(ApiKeyStatus api_key_status) {
         this.api_key_status = api_key_status;
-    }
-
-    public AppEntity getApp() {
-        return app;
-    }
-
-    public void setApp(AppEntity app) {
-        this.app = app;
     }
 
     public Timestamp getCreated_at() {

@@ -6,4 +6,6 @@ import org.radon.pushup.features.tenant.presentation.dto.TenantResponse;
 
 public interface TenantRepository {
     Tenant createTenant(CreateTenantRequest request);
+    Tenant getTenant();
+
 }

@@ -1,0 +1,12 @@
+package org.radon.pushup.shared.aop.exceptionHandling.model;
+
+import org.radon.pushup.shared.aop.exceptionHandling.ExceptionModel;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.UNAUTHORIZED)
+public class TenantAccessException extends ExceptionModel {
+    public TenantAccessException() {
+        super("This Tenant does not belong to this User!", HttpStatus.UNAUTHORIZED);
+    }
+}

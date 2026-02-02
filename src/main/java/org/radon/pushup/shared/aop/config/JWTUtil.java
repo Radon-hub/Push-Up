@@ -8,6 +8,7 @@ import org.radon.pushup.features.user.domain.Role;
 import org.radon.pushup.features.user.domain.User;
 import org.radon.pushup.features.user.infrastructure.repository.entities.AuthorityEntity;
 import org.radon.pushup.features.user.infrastructure.repository.entities.RoleEntity;
+import org.radon.pushup.shared.aop.exceptionHandling.model.InvalidArgsException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -59,7 +60,7 @@ public class JWTUtil {
         Object roleClaim = body.get("authorization");
 
         if (!(roleClaim instanceof Map<?, ?> roleMap)) {
-            throw new IllegalArgumentException("Invalid role claim");
+            throw new InvalidArgsException("Invalid role claim");
         }
 
         // ---- role name ----
@@ -69,7 +70,7 @@ public class JWTUtil {
         Object authoritiesClaim = roleMap.get("authorities");
 
         if (!(authoritiesClaim instanceof List<?> authorityList)) {
-            throw new IllegalArgumentException("Invalid authorities claim");
+            throw new InvalidArgsException("Invalid authorities claim");
         }
 
         Set<Authority> authorities = authorityList.stream()
@@ -78,11 +79,11 @@ public class JWTUtil {
                     if(item instanceof Map<?, ?> authoritiesMap) {
                         Object value = authoritiesMap.get("authority");
                         if(value == null){
-                            throw new IllegalArgumentException("Invalid authorities claim");
+                            throw new InvalidArgsException("Invalid authorities claim");
                         }
                         return new Authority(value.toString());
                     }
-                    throw new IllegalArgumentException("Invalid authorities format in jwt");
+                    throw new InvalidArgsException("Invalid authorities format in jwt");
                 })
                 .collect(Collectors.toSet());
 

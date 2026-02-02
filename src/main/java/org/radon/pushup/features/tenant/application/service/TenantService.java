@@ -1,6 +1,7 @@
 package org.radon.pushup.features.tenant.application.service;
 
 import org.radon.pushup.features.tenant.application.port.in.CreateTenantUseCase;
+import org.radon.pushup.features.tenant.application.port.in.GetUserTenantUseCase;
 import org.radon.pushup.features.tenant.application.port.out.TenantRepository;
 import org.radon.pushup.features.tenant.domain.Tenant;
 import org.radon.pushup.features.tenant.presentation.dto.CreateTenantRequest;
@@ -8,7 +9,7 @@ import org.radon.pushup.features.tenant.presentation.dto.TenantResponse;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TenantService implements CreateTenantUseCase {
+public class TenantService implements CreateTenantUseCase, GetUserTenantUseCase {
 
     private final TenantRepository tenantRepository;
 
@@ -19,5 +20,10 @@ public class TenantService implements CreateTenantUseCase {
     @Override
     public Tenant createTenant(CreateTenantRequest request) {
         return tenantRepository.createTenant(request);
+    }
+
+    @Override
+    public Tenant getTenant() {
+        return tenantRepository.getTenant();
     }
 }

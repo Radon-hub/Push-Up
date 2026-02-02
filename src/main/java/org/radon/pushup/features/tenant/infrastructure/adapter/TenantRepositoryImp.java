@@ -13,6 +13,7 @@ import org.radon.pushup.features.tenant.presentation.mapper.TenantDtoMapper;
 import org.radon.pushup.features.user.infrastructure.repository.UserJpaRepository;
 import org.radon.pushup.features.user.infrastructure.repository.entities.UserEntity;
 import org.radon.pushup.features.user.infrastructure.repository.mapper.UserMappers;
+import org.radon.pushup.shared.aop.exceptionHandling.model.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,23 +41,23 @@ public class TenantRepositoryImp implements TenantRepository {
 
         tenantJpaRepository.findByName(request.getName())
                 .ifPresent(t -> {
-                    throw new IllegalArgumentException("Tenant already exists");
+                    throw new TenantExistException();
                 });
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
-            throw new IllegalArgumentException("Unauthenticated");
+            throw new AccessDeniedException("Not authenticated!");
         }
 
         String username = auth.getName();
 
         UserEntity userEntity = userJpaRepository
                 .findUserEntityByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(UserNotFoundException::new);
 
         if(userEntity.getTenant() != null) {
-            throw new IllegalArgumentException("User already have tenant!");
+            throw new UserHaveTenantException();
         }
 
         TenantEntity tenant = tenantJpaRepository.save(
@@ -72,5 +73,26 @@ public class TenantRepositoryImp implements TenantRepository {
         userEntity.setTenant(tenant);
 
         return TenantMappers.toTenantFromTenantEntity(tenant);
+    }
+
+    @Override
+    public Tenant getTenant() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new AccessDeniedException("Not authenticated!");
+        }
+
+        String username = auth.getName();
+
+        UserEntity userEntity = userJpaRepository
+                .findUserEntityByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
+
+        if(userEntity.getTenant() == null) {
+            throw new UserNotHaveTenantException();
+        }
+
+        return  TenantMappers.toTenantFromTenantEntity(userEntity.getTenant());
     }
 }

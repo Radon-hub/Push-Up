@@ -11,4 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Response<T> {
     private T data;
+    private ErrorResponse error;
 }
