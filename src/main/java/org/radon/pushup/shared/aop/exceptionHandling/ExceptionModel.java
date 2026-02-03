@@ -11,6 +11,7 @@ public class ExceptionModel extends RuntimeException {
     private HttpStatus httpStatus;
 
     public ExceptionModel(String message, HttpStatus httpStatus) {
+        super(message);
         this.message = message;
         this.httpStatus = httpStatus;
     }
@@ -19,7 +20,7 @@ public class ExceptionModel extends RuntimeException {
         return ResponseEntity.status(httpStatus).body(new ErrorResponse(
                 httpStatus.value(),
                 httpStatus.name(),
-                message,
+                getMessage(),
                 path
         ));
     }

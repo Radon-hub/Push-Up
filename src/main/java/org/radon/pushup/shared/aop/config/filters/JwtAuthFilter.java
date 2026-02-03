@@ -1,9 +1,10 @@
-package org.radon.pushup.shared.aop.config;
+package org.radon.pushup.shared.aop.config.filters;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.radon.pushup.shared.aop.config.JWTUtil;
 import org.radon.pushup.shared.dto.ErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
