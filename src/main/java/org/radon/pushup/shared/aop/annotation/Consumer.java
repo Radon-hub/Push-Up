@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface EventConsumer {
+public @interface Consumer {
     @AliasFor(
             annotation = Component.class
     )

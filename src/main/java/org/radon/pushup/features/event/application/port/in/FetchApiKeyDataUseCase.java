@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.radon.pushup.features.event.domain.EventModel;
 import org.radon.pushup.features.event.presentation.dto.SendEventRequest;
 
+import java.security.NoSuchAlgorithmException;
+
 public interface FetchApiKeyDataUseCase {
-    EventModel fetchApiKeyData(String apiKey, SendEventRequest request);
+    EventModel fetchApiKeyData(String apiKey, SendEventRequest request) throws NoSuchAlgorithmException;
 }

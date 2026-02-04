@@ -29,14 +29,30 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   # Kafka event bus configurations
+  # Kafka event bus configurations
   kafka:
-    bootstrap-servers: kafka:29092
+    bootstrap-servers: localhost:9097
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      retries: 3
+      acks: all
       properties:
         spring.json.trusted.packages: "*"
         spring.json.add.type.headers: false
+        delivery.timeout.ms: 120000
+        linger.ms: 5
+
+    consumer:
+      group-id: shopy-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.add.type.headers: false
+        spring.json.value.default.type: org.radon.pushup.features.event.domain.EventModel
   web:
     error:
       include-message: always

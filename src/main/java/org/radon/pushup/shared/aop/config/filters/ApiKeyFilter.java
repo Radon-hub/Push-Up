@@ -9,7 +9,6 @@ import org.radon.pushup.features.app.domain.AppStatus;
 import org.radon.pushup.features.app.infrastructure.repository.ApiKeyJpaRepository;
 import org.radon.pushup.features.tenant.domain.TenantStatus;
 import org.radon.pushup.shared.aop.exceptionHandling.model.ApiKeyException;
-import org.radon.pushup.shared.aop.exceptionHandling.model.ApiKeyNotFoundException;
 import org.radon.pushup.shared.aop.exceptionHandling.model.InvalidArgsException;
 import org.radon.pushup.shared.apiKeys.ApiKeyHasher;
 import org.springframework.stereotype.Component;

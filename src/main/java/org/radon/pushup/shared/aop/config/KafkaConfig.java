@@ -19,5 +19,13 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic eventTopicDLQ() {
+        return TopicBuilder.name("events.raw.dlq.v1")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
 
 }

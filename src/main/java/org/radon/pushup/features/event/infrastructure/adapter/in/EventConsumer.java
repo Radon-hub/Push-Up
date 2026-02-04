@@ -1,11 +1,12 @@
 package org.radon.pushup.features.event.infrastructure.adapter.in;
 
 import org.radon.pushup.features.event.domain.EventModel;
+import org.radon.pushup.shared.aop.annotation.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
 
-@org.radon.pushup.shared.aop.annotation.EventConsumer
+@Consumer
 public class EventConsumer {
 
     Logger logger = LoggerFactory.getLogger(EventConsumer.class);
@@ -15,7 +16,7 @@ public class EventConsumer {
             topics = "events.raw.v1",
             groupId = "event-raw-group"
     )
-    public void receiveUserRegistered(EventModel model) {
+    public void receiveRawEvents(EventModel model) {
         logger.info("------------- Received event! -----------------");
         model.setReceivedAt(System.currentTimeMillis());
         logger.info(
