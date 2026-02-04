@@ -32,10 +32,13 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
+      retries: 3
+      acks: all
       properties:
         spring.json.trusted.packages: "*"
         spring.json.add.type.headers: false
+        delivery.timeout.ms: 120000
+        linger.ms: 5
 
     consumer:
       group-id: shopy-service-group

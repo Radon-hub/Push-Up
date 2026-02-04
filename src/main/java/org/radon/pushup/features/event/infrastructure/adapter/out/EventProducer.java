@@ -2,8 +2,9 @@ package org.radon.pushup.features.event.infrastructure.adapter.out;
 
 import org.radon.pushup.features.event.domain.EventModel;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.radon.pushup.shared.aop.annotation.Producer;
 
-@org.radon.pushup.shared.aop.annotation.EventProducer
+@Producer
 public class EventProducer {
 
     private final KafkaTemplate<String, EventModel> kafkaTemplate;

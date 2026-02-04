@@ -9,7 +9,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface EventProducer {
+public @interface Producer {
     @AliasFor(
             annotation = Component.class
     )
