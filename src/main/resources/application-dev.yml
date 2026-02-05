@@ -48,7 +48,7 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
         spring.json.add.type.headers: false
-        spring.json.value.default.type: org.radon.pushup.features.event.domain.EventModel
+        spring.json.value.default.type: org.radon.pushup.features.event.ingestion.domain.EventModel
   web:
     error:
       include-message: always

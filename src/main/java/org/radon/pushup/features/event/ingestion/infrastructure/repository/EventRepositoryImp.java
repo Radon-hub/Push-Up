@@ -74,7 +74,7 @@ public class EventRepositoryImp implements EventRepository {
                 request.eventName(),
                 request.location(),
                 request.platform(),
-                Instant.now().getEpochSecond(),
+                System.currentTimeMillis(),
                 0,
                 request.properties()
         );

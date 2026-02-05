@@ -21,7 +21,7 @@ public class EventMappers {
                 request.eventName(),
                 request.location(),
                 request.platform(),
-                Instant.now().getEpochSecond(),
+                System.currentTimeMillis(),
                 0,
                 request.properties()
         );
