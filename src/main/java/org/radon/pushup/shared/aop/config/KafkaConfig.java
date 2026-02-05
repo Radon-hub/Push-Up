@@ -27,5 +27,21 @@ public class KafkaConfig {
                 .build();
     }
 
+    @Bean
+    public NewTopic enrichedEventTopic() {
+        return TopicBuilder.name("events.enriched.v1")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic enrichedEventTopicDLQ() {
+        return TopicBuilder.name("events.enriched.dlq.v1")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
 
 }
