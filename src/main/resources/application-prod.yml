@@ -1,9 +1,15 @@
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/shopy-db
-    username: postgres
-    password: 1234
-    driver-class-name: org.postgresql.Driver
+    clickhouse:
+      url: jdbc:clickhouse:http://localhost:8123/pushup
+      username: dev
+      password: dev1234
+      driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+    postgres:
+      url: jdbc:postgresql://postgres:5432/pushup-db
+      username: postgres
+      password: 1234
+      driver-class-name: org.postgresql.Driver
 
 
   # Redis configs
@@ -40,7 +46,7 @@ spring:
       acks: all
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.add.type.headers: false
+        spring.json.add.type.headers: true
         delivery.timeout.ms: 120000
         linger.ms: 5
 
@@ -48,11 +54,12 @@ spring:
       group-id: shopy-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-
       properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: "*"
         spring.json.add.type.headers: false
-        spring.json.value.default.type: org.radon.pushup.features.event.ingestion.domain.EventModel
+
   web:
     error:
       include-message: always
@@ -76,7 +83,9 @@ management:
     tags:
       application: my-spring-app
 
-security:
-  SECRET_KEY: aljvnkjn3)n3u4nf9un9u3n59-3inon3v
-  ACCESS_TOKEN_VALIDITY_SECONDS: 300000
-  REFRESH_TOKEN_VALIDITY_SECONDS: 900000
+app:
+  security:
+    jwt:
+      SECRET_KEY: aljvnkjn3)n3u4nf9un9u3n59-3inon3v
+      ACCESS_TOKEN_VALIDITY_SECONDS: 300000
+      REFRESH_TOKEN_VALIDITY_SECONDS: 900000

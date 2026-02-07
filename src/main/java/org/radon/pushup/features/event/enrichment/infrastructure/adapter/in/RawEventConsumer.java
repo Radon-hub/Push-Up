@@ -16,7 +16,8 @@ public class RawEventConsumer {
 
     @KafkaListener(
             topics = "events.raw.v1",
-            groupId = "event-enrichment-group"
+            groupId = "event-enrichment-group",
+            containerFactory = "eventModelKafkaFactory"
     )
     public void receiveRawEvents(EventModel rawEvent) {
         sendEnrichedEventUseCase.sendEnrichedEvent(rawEvent);
