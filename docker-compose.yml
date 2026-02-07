@@ -1,0 +1,79 @@
+services:
+
+  redis:
+    image: redis:7-alpine
+    container_name: pushup-redis
+    ports:
+      - 6379:6379
+    volumes:
+      - pushup-redis-data:/data
+
+
+  clickhouse:
+    image: clickhouse:latest
+    container_name: pushup-clickhouse
+    ports:
+      - 8123:8123
+      - 9000:9000
+    networks:
+      - shared
+      - internal
+    volumes:
+      - ./users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - pushup-clickhouse-data:/var/lib/clickhouse
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: pushup-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - shared
+      - internal
+
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: pushup-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9097:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+
+      # INTERNAL listener for communication *inside Docker* between services
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
+      #      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9097
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+
+      # Zookeeper connection
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_CFG_LOG_RETENTION_MS: 260000000
+
+    networks:
+      - shared
+      - internal
+
+
+volumes:
+  pushup-redis-data:
+  pushup-clickhouse-data:
+
+networks:
+  internal:
+    driver: bridge
+
+  shared:
+    external: true
+    name: pushup-shared-net

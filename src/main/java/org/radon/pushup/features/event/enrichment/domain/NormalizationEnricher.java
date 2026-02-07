@@ -16,7 +16,7 @@ public class NormalizationEnricher implements Enricher {
     public EnrichedEvent enrich(EnrichedEvent current, EventModel raw) {
 
         return current.toBuilder()
-                .eventNormalized(current.getEventName().toLowerCase().trim())
+                .eventNormalized(current.getEventName().toLowerCase().trim().replace(" ","_"))
                 .build();
     }
 

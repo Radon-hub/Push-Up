@@ -25,6 +25,23 @@ public class EnrichedEvent {
     private final long receivedAt;
     private final Map<String, Object> properties;
 
+    public EnrichedEvent(
+    ) {
+        this.eventId = "";
+        this.tenantId = UUID.randomUUID();
+        this.appId = UUID.randomUUID();
+        this.userId = "";
+        this.eventName = "";
+        this.eventNormalized = "";
+        this.location = "";
+        this.platform = Platform.WEB;
+        this.version = "";
+        this.eventTime = 0;
+        this.eventDate = "";
+        this.eventHour = 0;
+        this.receivedAt = 0;
+        this.properties = new HashMap<>();
+    }
 
     private EnrichedEvent(Builder builder) {
         this.userId = builder.userId;
