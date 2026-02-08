@@ -2,16 +2,20 @@ package org.radon.pushup.features.event.ingestion.presentation;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.radon.pushup.features.event.ingestion.application.port.in.FetchApiKeyDataUseCase;
 import org.radon.pushup.features.event.ingestion.application.port.in.IsEventDuplicateUseCase;
 import org.radon.pushup.features.event.ingestion.application.port.in.SendDlqEventUseCase;
 import org.radon.pushup.features.event.ingestion.application.port.in.SendEventUseCase;
 import org.radon.pushup.features.event.ingestion.domain.DlqEvent;
+import org.radon.pushup.features.event.ingestion.domain.EventModel;
 import org.radon.pushup.features.event.ingestion.domain.EventStages;
 import org.radon.pushup.features.event.ingestion.domain.IngestionErrorCode;
 import org.radon.pushup.features.event.ingestion.presentation.dto.SendEventRequest;
+import org.radon.pushup.shared.aop.exceptionHandling.ExceptionModel;
 import org.radon.pushup.shared.aop.exceptionHandling.model.InvalidEventException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,26 +27,20 @@ public class EventRestController {
     private final SendEventUseCase sendEventUseCase;
     private final SendDlqEventUseCase sendDlqEventUseCase;
     private final FetchApiKeyDataUseCase fetchApiKeyDataUseCase;
-    private final IsEventDuplicateUseCase isDuplicateUseCase;
 
-    public EventRestController(SendEventUseCase sendEventUseCase, SendDlqEventUseCase sendDlqEventUseCase, FetchApiKeyDataUseCase fetchApiKeyDataUseCase, IsEventDuplicateUseCase isDuplicateUseCase) {
+    public EventRestController(SendEventUseCase sendEventUseCase, SendDlqEventUseCase sendDlqEventUseCase, FetchApiKeyDataUseCase fetchApiKeyDataUseCase) {
         this.sendEventUseCase = sendEventUseCase;
         this.sendDlqEventUseCase = sendDlqEventUseCase;
         this.fetchApiKeyDataUseCase = fetchApiKeyDataUseCase;
-        this.isDuplicateUseCase = isDuplicateUseCase;
     }
 
     @RequestMapping
-    public ResponseEntity<String> sendEvent(@RequestBody SendEventRequest request, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<String> sendEvent(@Valid @RequestBody SendEventRequest request, HttpServletRequest httpServletRequest) {
 
         try{
             var apiKey = httpServletRequest.getHeader("X-API-KEY");
 
             var eventModel = fetchApiKeyDataUseCase.fetchApiKeyData(apiKey,request);
-
-            if(isDuplicateUseCase.isDuplicate(eventModel.getAppId(),eventModel.getEventId())) {
-                return ResponseEntity.ok("Event already processed!");
-            }
 
             sendEventUseCase.sendEvent(eventModel);
 
@@ -64,6 +62,8 @@ public class EventRestController {
 
             return ResponseEntity.badRequest().body("Invalid event");
 
+        } catch (ExceptionModel e) {
+            throw e;
         } catch (Exception ex) {
 
             sendDlqEventUseCase.sendEvent(
