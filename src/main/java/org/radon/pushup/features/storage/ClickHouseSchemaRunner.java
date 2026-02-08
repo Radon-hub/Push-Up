@@ -19,14 +19,16 @@ public class ClickHouseSchemaRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         createEventsTable();
+        applyEventsTTL();
+
         createEventsKafkaTable();
         createEventsMaterializedView();
 
         createDLQEventsTable();
+        applyDlqEventsTTL();
+
         createDLQEventsKafkaTable();
         createDLQEventsMaterializedView();
-
-
 
         System.out.println("ClickHouse tables initialized");
     }
@@ -43,7 +45,9 @@ public class ClickHouseSchemaRunner implements CommandLineRunner {
                 event_normalized LowCardinality(String),
                 location String,
                 platform String,
-                version String,
+                schema_version String,
+                app_version String,
+                device String,
                 event_time DateTime64(3),
                 event_date Date,
                 event_hour UInt8,
@@ -88,9 +92,11 @@ public class ClickHouseSchemaRunner implements CommandLineRunner {
             JSONExtractString(raw, 'userId') AS user_id,
             JSONExtractString(raw, 'eventName') AS event_name,
             JSONExtractString(raw, 'eventNormalized') AS event_normalized,
+            JSONExtractString(raw, 'schemaVersion') AS schema_version,
+            JSONExtractString(raw, 'appVersion') AS app_version,
+            JSONExtractString(raw, 'device') AS device,
             JSONExtractString(raw, 'location') AS location,
             JSONExtractString(raw, 'platform') AS platform,
-            JSONExtractString(raw, 'version') AS version,
             parseDateTime64BestEffortOrNull(JSONExtractString(raw, 'eventTime')) AS event_time,
             toDate(JSONExtractString(raw, 'eventDate')) AS event_date,
             JSONExtractUInt(raw, 'eventHour') AS event_hour,
@@ -160,6 +166,22 @@ public class ClickHouseSchemaRunner implements CommandLineRunner {
         jdbcTemplate.execute(sql);
     }
 
+    private void applyEventsTTL() {
+        String sql = """
+        ALTER TABLE events
+        MODIFY TTL event_time + INTERVAL 180 DAY
+    """;
 
+        jdbcTemplate.execute(sql);
+    }
+
+    private void applyDlqEventsTTL() {
+        String sql = """
+        ALTER TABLE events_dlq
+        MODIFY TTL received_at + INTERVAL 30 DAY
+    """;
+
+        jdbcTemplate.execute(sql);
+    }
 
 }

@@ -33,7 +33,9 @@ public class EnrichmentPipeline {
                 .receivedAt(System.currentTimeMillis())
                 .platform(raw.getPlatform())
                 .location(raw.getLocation())
-                .version("1.0.0")
+                .device(raw.getDevice())
+                .appVersion(raw.getAppVersion())
+                .schemaVersion(raw.getSchemaVersion())
                 .properties(raw.getProperties())
                 .build();
 

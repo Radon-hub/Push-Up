@@ -5,6 +5,9 @@ public class DlqEvent {
 
     private final String appId;
     private final String tenantId;
+    private final String schemaVersion;
+    private final String appVersion;
+    private final String device;
     private final EventStages stage;
     private final String errorCode;
     private final String errorMessage;
@@ -18,6 +21,9 @@ public class DlqEvent {
         this.errorCode = builder.errorCode;
         this.errorMessage = builder.errorMessage;
         this.originalEvent = builder.originalEvent;
+        this.schemaVersion = builder.schemaVersion;
+        this.appVersion = builder.appVersion;
+        this.device = builder.device;
         this.receivedAt = builder.receivedAt;
     }
 
@@ -33,6 +39,10 @@ public class DlqEvent {
         private EventStages stage;
         private String errorCode;
         private String errorMessage;
+
+        private String schemaVersion;
+        private String appVersion;
+        private String device;
 
         private Object originalEvent;
         private long receivedAt;
@@ -62,6 +72,18 @@ public class DlqEvent {
             this.originalEvent = originalEvent;
             return this;
         }
+        public Builder schemaVersion(String schemaVersion) {
+            this.schemaVersion = schemaVersion;
+            return this;
+        }
+        public Builder appVersion(String appVersion) {
+            this.appVersion = appVersion;
+            return this;
+        }
+        public Builder device(String device) {
+            this.device = device;
+            return this;
+        }
         public Builder receivedAt(long receivedAt) {
             this.receivedAt = receivedAt;
             return this;
@@ -70,6 +92,18 @@ public class DlqEvent {
             return new DlqEvent(this);
         }
 
+    }
+
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public String getDevice() {
+        return device;
     }
 
     public String getAppId() {

@@ -18,15 +18,19 @@ public class EnrichedEvent {
     private final String eventNormalized;
     private final String location;
     private final Platform platform;
-    private final String version;
+    private final String schemaVersion;
+    private final String appVersion;
+    private final String device;
     private final long eventTime;
     private final String eventDate;
     private final Integer eventHour;
     private final long receivedAt;
     private final Map<String, Object> properties;
 
-    public EnrichedEvent(
-    ) {
+    public EnrichedEvent() {
+        this.schemaVersion = "";
+        this.appVersion = "";
+        this.device = "";
         this.eventId = "";
         this.tenantId = UUID.randomUUID();
         this.appId = UUID.randomUUID();
@@ -35,7 +39,6 @@ public class EnrichedEvent {
         this.eventNormalized = "";
         this.location = "";
         this.platform = Platform.WEB;
-        this.version = "";
         this.eventTime = 0;
         this.eventDate = "";
         this.eventHour = 0;
@@ -52,12 +55,14 @@ public class EnrichedEvent {
         this.eventNormalized = builder.eventNormalized;
         this.location = builder.location;
         this.platform = builder.platform;
-        this.version = builder.version;
         this.eventTime = builder.eventTime;
         this.eventDate = builder.eventDate;
         this.eventHour = Objects.requireNonNullElse(builder.eventHour, 0);
         this.receivedAt = builder.receivedAt;
         this.properties = builder.properties;
+        this.schemaVersion = builder.schemaVersion;
+        this.appVersion = builder.appVersion;
+        this.device = builder.device;
     }
 
     public static Builder builder() {
@@ -78,7 +83,9 @@ public class EnrichedEvent {
                 .receivedAt(this.receivedAt)
                 .platform(this.platform)
                 .location(this.location)
-                .version(this.version)
+                .schemaVersion(this.schemaVersion)
+                .appVersion(this.appVersion)
+                .device(this.device)
                 .properties(this.properties);
     }
 
@@ -92,11 +99,13 @@ public class EnrichedEvent {
         private String eventNormalized;
         private String location;
         private Platform platform;
-        private String version;
         private long eventTime;
         private String eventDate;
         private Integer eventHour;
         private long receivedAt;
+        private String schemaVersion;
+        private String appVersion;
+        private String device;
         private Map<String, Object> properties;
 
         public Builder eventId(String eventId) {
@@ -131,10 +140,6 @@ public class EnrichedEvent {
             this.platform = platform;
             return this;
         }
-        public Builder version(String version) {
-            this.version = version;
-            return this;
-        }
         public Builder eventTime(long eventTime) {
             this.eventTime = eventTime;
             return this;
@@ -151,6 +156,18 @@ public class EnrichedEvent {
             this.receivedAt = receivedAt;
             return this;
         }
+        public Builder schemaVersion(String schemaVersion) {
+            this.schemaVersion = schemaVersion;
+            return this;
+        }
+        public Builder appVersion(String appVersion) {
+            this.appVersion = appVersion;
+            return this;
+        }
+        public Builder device(String device) {
+            this.device = device;
+            return this;
+        }
         public Builder properties(Map<String, Object> properties) {
             this.properties = properties;
             return this;
@@ -163,6 +180,17 @@ public class EnrichedEvent {
 
 
 
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public String getDevice() {
+        return device;
+    }
     public String getEventId() {
         return eventId;
     }
@@ -193,10 +221,6 @@ public class EnrichedEvent {
 
     public Platform getPlatform() {
         return platform;
-    }
-
-    public String getVersion() {
-        return version;
     }
 
     public long getEventTime() {

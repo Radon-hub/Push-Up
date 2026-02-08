@@ -14,6 +14,9 @@ public class EventModel {
     private String userId;
     private String eventName;
     private String location;
+    private String schemaVersion;
+    private String appVersion;
+    private String device;
     private Platform platform;
     private long eventTime = 0;
     private long receivedAt = 0;
@@ -22,17 +25,44 @@ public class EventModel {
     public EventModel() {
     }
 
-    public EventModel(String eventId, UUID tenantId, UUID appId, String userId, String eventName, String location, Platform platform, long eventTime, long receivedAt, Map<String, Object> properties) {
+    public EventModel(String eventId, UUID tenantId, UUID appId, String userId, String eventName, String location, String schemaVersion, String appVersion, String device, Platform platform, long eventTime, long receivedAt, Map<String, Object> properties) {
         this.eventId = eventId;
         this.tenantId = tenantId;
         this.appId = appId;
         this.userId = userId;
         this.eventName = eventName;
         this.location = location;
+        this.schemaVersion = schemaVersion;
+        this.appVersion = appVersion;
+        this.device = device;
         this.platform = platform;
         this.eventTime = eventTime;
         this.receivedAt = receivedAt;
         this.properties = properties;
+    }
+
+    public String getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(String schemaVersion) {
+        this.schemaVersion = schemaVersion;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
     }
 
     public Platform getPlatform() {
