@@ -26,7 +26,7 @@ public class ApiKeyEntity {
     private String api_key_prefix;
     @Enumerated(EnumType.STRING)
     private ApiKeyStatus api_key_status;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_id")
     private AppEntity app;
     private Timestamp created_at = new Timestamp(System.currentTimeMillis());

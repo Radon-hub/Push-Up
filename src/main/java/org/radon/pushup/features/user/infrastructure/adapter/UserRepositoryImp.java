@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -76,10 +77,12 @@ public class UserRepositoryImp implements UserRepository {
         return user;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity optionalUser = userJpaRepository.findUserEntityByUsername(username).orElseThrow(UserNotFoundException::new);
-        return UserMappers.fromUserEntityToUser(optionalUser);
+        UserEntity user = userJpaRepository.findUserEntityByUsername(username).orElseThrow(UserNotFoundException::new);
+
+        return UserMappers.fromUserEntityToUser(user);
     }
 
     private UserEntity getUserWithTenantExistence(){

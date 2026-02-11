@@ -8,15 +8,12 @@ import org.radon.pushup.features.event.ingestion.application.port.out.EventRepos
 import org.radon.pushup.features.event.ingestion.domain.DlqEvent;
 import org.radon.pushup.features.event.ingestion.domain.EventModel;
 import org.radon.pushup.features.event.ingestion.domain.validation.EventContextValidator;
-import org.radon.pushup.features.event.ingestion.domain.validation.EventTimePolicy;
 import org.radon.pushup.features.event.ingestion.infrastructure.adapter.out.DlqProducer;
 import org.radon.pushup.features.event.ingestion.infrastructure.adapter.out.EventProducer;
 import org.radon.pushup.features.event.ingestion.presentation.dto.SendEventRequest;
-import org.radon.pushup.features.tenant.domain.Tenant;
 import org.radon.pushup.shared.aop.exceptionHandling.model.AppNotFoundException;
 import org.radon.pushup.shared.aop.exceptionHandling.model.DuplicateEventException;
 import org.radon.pushup.shared.apiKeys.ApiKeyHasher;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
@@ -72,7 +69,7 @@ public class EventService implements SendEventUseCase, FetchApiKeyDataUseCase, S
                 request.appVersion() == null ? "unknown" : request.appVersion(),
                 request.device() == null ? "unknown" : request.device(),
                 request.platform(),
-                EventTimePolicy.resolveEventTime(request.eventTime()),
+                request.eventTime(),
                 0,
                 request.properties()
         );

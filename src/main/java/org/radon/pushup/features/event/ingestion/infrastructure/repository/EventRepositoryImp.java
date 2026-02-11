@@ -16,6 +16,7 @@ import org.radon.pushup.shared.aop.exceptionHandling.model.InvalidArgsException;
 import org.radon.pushup.shared.aop.exceptionHandling.model.InvalidEventException;
 import org.radon.pushup.shared.apiKeys.ApiKeyHasher;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -34,6 +35,7 @@ public class EventRepositoryImp implements EventRepository {
     }
 
 
+    @Transactional(readOnly = true)
     @Override
     public Tenant fetchApiKeyData(String apiKeyHash) {
 

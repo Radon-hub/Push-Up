@@ -26,11 +26,11 @@ public class AppEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @OneToMany(mappedBy = "app",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "app",cascade = CascadeType.ALL, orphanRemoval = true,fetch =  FetchType.LAZY)
     private Set<ApiKeyEntity> api_key = new HashSet<>();
     @Column(unique = true)
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "apps_platforms_table",
             joinColumns = @JoinColumn(name = "app_id"),
@@ -39,10 +39,10 @@ public class AppEntity {
     private Set<PlatformEntity> platform = new HashSet<>();
     @Enumerated(EnumType.STRING)
     private AppStatus status = AppStatus.DISABLED;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id")
     private TenantEntity tenant;
-    @ManyToMany(mappedBy = "apps",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "apps",fetch = FetchType.LAZY)
     private Set<UserEntity> users = new HashSet<>();
     private Timestamp created_at = new Timestamp(System.currentTimeMillis());
     private Timestamp updated_at = new Timestamp(System.currentTimeMillis());

@@ -22,7 +22,7 @@ public class PlatformEntity {
     private Long id;
     @Enumerated(EnumType.STRING)
     private Platform platform;
-    @ManyToMany(mappedBy = "platform",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "platform",fetch = FetchType.LAZY)
     private Set<AppEntity> app;
 
     public PlatformEntity(Platform platform) {

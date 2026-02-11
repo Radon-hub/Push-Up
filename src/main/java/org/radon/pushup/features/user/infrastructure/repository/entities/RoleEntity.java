@@ -22,7 +22,7 @@ public class RoleEntity {
     @GeneratedValue
     private int id;
     private String name;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "role_authority_table",
             joinColumns = @JoinColumn(name = "role_id"),
