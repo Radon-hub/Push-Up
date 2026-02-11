@@ -1,4 +1,6 @@
 spring:
+  jackson:
+    property-naming-strategy: SNAKE_CASE
   datasource:
     clickhouse:
       url: jdbc:clickhouse:http://localhost:8123/pushup
@@ -6,7 +8,7 @@ spring:
       password: dev1234
       driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
     postgres:
-      url: jdbc:postgresql://localhost:5432/pushup-db
+      url: jdbc:postgresql://127.0.0.1:5432/pushup-db
       username: postgres
       password:
       driver-class-name: org.postgresql.Driver
@@ -33,8 +35,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   # Kafka event bus configurations
   kafka:
-    bootstrap-servers: localhost:9097
-
+#    bootstrap-servers: localhost:9097
+    bootstrap-servers: localhost:9097,localhost:9098,localhost:9099
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -45,6 +47,7 @@ spring:
         spring.json.add.type.headers: true
         delivery.timeout.ms: 120000
         linger.ms: 5
+        enable.idempotence: true
 
     consumer:
       group-id: shopy-service-group
@@ -87,3 +90,11 @@ app:
       SECRET_KEY: ChangeMeOnProductionPleaseBecauseIAMNotSecure*100Percent!!!
       ACCESS_TOKEN_VALIDITY_SECONDS: 300000
       REFRESH_TOKEN_VALIDITY_SECONDS: 900000
+  clickhouse:
+    kafka:
+      kafka_num_consumers: 8
+      max_block_size: 1000
+      kafka_poll_timeout_ms: 500
+  kafka:
+    partitions: 8
+    replicas: 3

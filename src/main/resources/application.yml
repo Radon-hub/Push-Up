@@ -3,3 +3,10 @@ spring:
       name: PushUp
   profiles:
     active: dev
+
+
+logging:
+  level:
+    com:
+      zaxxer:
+        hikari=DEBUG:

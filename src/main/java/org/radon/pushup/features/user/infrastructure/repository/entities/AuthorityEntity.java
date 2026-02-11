@@ -25,7 +25,7 @@ public class AuthorityEntity {
     @GeneratedValue
     private int id;
     private String authority;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "role_authority_table",
             joinColumns = @JoinColumn(name = "role_id"),

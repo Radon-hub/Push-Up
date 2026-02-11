@@ -31,17 +31,17 @@ public class UserEntity {
     private String email;
     @Column(unique = true)
     private String phone;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id")
     private TenantEntity tenant;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "apps_users_table",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "app_id")
     )
     private Set<AppEntity> apps;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id")
     private RoleEntity role;
     private Timestamp created_at = new Timestamp(System.currentTimeMillis());

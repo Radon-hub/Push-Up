@@ -6,6 +6,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.radon.pushup.features.event.enrichment.domain.model.EnrichedEvent;
 import org.radon.pushup.features.event.ingestion.domain.EventModel;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -18,35 +19,41 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 @EnableKafka
 public class KafkaConfig {
 
+
+    @Value("${app.kafka.partitions}")
+    private int kafka_partitions;
+    @Value("${app.kafka.replicas}")
+    private int kafka_replicas;
+
     @Bean
     public NewTopic eventTopic() {
         return TopicBuilder.name("events.raw.v1")
-                .partitions(1)
-                .replicas(1)
+                .partitions(kafka_partitions)
+                .replicas(kafka_replicas)
                 .build();
     }
 
     @Bean
     public NewTopic eventTopicDLQ() {
         return TopicBuilder.name("events.raw.dlq.v1")
-                .partitions(1)
-                .replicas(1)
+                .partitions(kafka_partitions)
+                .replicas(kafka_replicas)
                 .build();
     }
 
     @Bean
     public NewTopic enrichedEventTopic() {
         return TopicBuilder.name("events.enriched.v1")
-                .partitions(1)
-                .replicas(1)
+                .partitions(kafka_partitions)
+                .replicas(kafka_replicas)
                 .build();
     }
 
     @Bean
     public NewTopic enrichedEventTopicDLQ() {
         return TopicBuilder.name("events.enriched.dlq.v1")
-                .partitions(1)
-                .replicas(1)
+                .partitions(kafka_partitions)
+                .replicas(kafka_replicas)
                 .build();
     }
 

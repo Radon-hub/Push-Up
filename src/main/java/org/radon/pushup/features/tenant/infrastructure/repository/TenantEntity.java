@@ -28,9 +28,9 @@ public class TenantEntity {
     private String name;
     @Enumerated(EnumType.STRING)
     private TenantStatus status;
-    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private Set<AppEntity> apps;
-    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     private Set<UserEntity> users;
     private Timestamp created_at = new Timestamp(System.currentTimeMillis());
     private Timestamp updated_at = new Timestamp(System.currentTimeMillis());
