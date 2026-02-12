@@ -89,7 +89,6 @@ public class ApiKeyRepositoryImp implements ApiKeyRepository {
         return AppMappers.toApiKeyFromApiKeyEntity(apiKey);
     }
 
-    @Transactional
     @Override
     public String rotateApiKey(Long apiKeyId) {
         var userEntity = getUserWithTenantExistence();

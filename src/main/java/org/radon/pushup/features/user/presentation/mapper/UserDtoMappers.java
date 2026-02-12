@@ -17,7 +17,7 @@ public class UserDtoMappers {
                 user.getEmail(),
                 user.getPhone(),
                 user.getRole().getRole(),
-                user.getApps().stream().map(AppDtoMappers::toAppResponse).collect(Collectors.toSet()),
+                user.getApps().stream().map(it -> it.getId().toString()).collect(Collectors.toSet()),
                 user.getCreated_at(),
                 user.getUpdated_at()
         );

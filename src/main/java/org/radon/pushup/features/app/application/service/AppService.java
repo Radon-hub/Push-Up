@@ -8,6 +8,7 @@ import org.radon.pushup.features.app.domain.AppStatus;
 import org.radon.pushup.features.app.domain.Platform;
 import org.radon.pushup.features.app.presentation.dto.ApiKeyResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -20,22 +21,26 @@ public class AppService implements CreateAppUseCase, ChangeAppStatusUseCase, Tog
         this.appRepository = appRepository;
     }
 
+    @Transactional
     @Override
     public App createApp(String name) {
         return appRepository.createApp(name);
     }
 
+    @Transactional
     @Override
     public App updateAppStatus(AppStatus appStatus, UUID appId) {
         return appRepository.updateAppStatus(appStatus, appId);
     }
 
 
+    @Transactional
     @Override
     public App toggleAppPlatform(UUID appId, Platform platform) {
         return appRepository.toggleAppPlatform(appId, platform);
     }
 
+    @Transactional
     @Override
     public App addUserToApp(UUID appId, UUID userId) {
         return appRepository.addUserToApp(appId, userId);

@@ -31,32 +31,20 @@ public class AuthRestController {
 
     @PostMapping("sign-up")
     public ResponseEntity<Response<String>> singUp(@RequestBody UserCreateRequest userCreateRequest) {
-        try{
-            var login = signUpUseCase.signUp(UserDtoMappers.createUserFromDto(userCreateRequest));
-            return ResponseEntity.ok().body(new Response<>("User created successfully",null));
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(new Response<>(null,null));
-        }
+        var login = signUpUseCase.signUp(UserDtoMappers.createUserFromDto(userCreateRequest));
+        return ResponseEntity.ok().body(new Response<>("User created successfully",null));
     }
 
     @PostMapping("login")
     public ResponseEntity<UserAuthTokensResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
-        try{
-            var login = loginUserUseCase.login(userLoginRequest);
-            return ResponseEntity.ok().body(login);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(new UserAuthTokensResponse(e.getMessage(),"failed to generate token!"));
-        }
+        var login = loginUserUseCase.login(userLoginRequest);
+        return ResponseEntity.ok().body(login);
     }
 
     @PostMapping("refresh-token")
     public ResponseEntity<UserAuthTokensResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
-        try{
-            var generated = refreshTokenUseCase.refreshToken(request.refreshToken());
-            return ResponseEntity.ok().body(generated);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(new UserAuthTokensResponse(e.getMessage(),"failed to generate tokens!"));
-        }
+        var generated = refreshTokenUseCase.refreshToken(request.refreshToken());
+        return ResponseEntity.ok().body(generated);
     }
 
 }

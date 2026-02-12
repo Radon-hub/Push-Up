@@ -7,6 +7,7 @@ import org.radon.pushup.features.tenant.domain.Tenant;
 import org.radon.pushup.features.tenant.presentation.dto.CreateTenantRequest;
 import org.radon.pushup.features.tenant.presentation.dto.TenantResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TenantService implements CreateTenantUseCase, GetUserTenantUseCase {
@@ -22,6 +23,7 @@ public class TenantService implements CreateTenantUseCase, GetUserTenantUseCase 
         return tenantRepository.createTenant(request);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Tenant getTenant() {
         return tenantRepository.getTenant();
