@@ -21,6 +21,7 @@ public class EventsDLQTable implements ClickHouseEntity {
             ENGINE = MergeTree
             PARTITION BY toYYYYMM(received_at)
             ORDER BY received_at
+            TTL received_at + INTERVAL 30 DAY
             SETTINGS index_granularity = 8192;                
                 """;
     }

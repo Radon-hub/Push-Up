@@ -15,18 +15,18 @@ public class HourlyEventsMV implements ClickHouseEntity {
                 SELECT
                     tenant_id,
                     app_id,
-                    event_date,
-                    event_hour,
+                    toStartOfHour(event_time) AS bucket_start,
                     event_name,
                     platform,
+                    location,
                     count() AS count
                 FROM events
                 GROUP BY
                     tenant_id,
                     app_id,
-                    event_date,
-                    event_hour,
+                    bucket_start,
                     event_name,
+                    location,
                     platform;
                 """;
     }

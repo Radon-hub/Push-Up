@@ -12,12 +12,13 @@ public class DailyActiveUsersTable implements ClickHouseEntity {
                 CREATE TABLE IF NOT EXISTS dau_daily
                 (
                     tenant_id UUID,
+                    app_id UUID,
                     event_date Date,
                     users UInt64
                 )
                 ENGINE = SummingMergeTree
-                PARTITION BY (tenant_id, event_date)
-                ORDER BY (tenant_id, event_date);
+                PARTITION BY (tenant_id,app_id, event_date)
+                ORDER BY (tenant_id,app_id, event_date);
                 """;
     }
 }
