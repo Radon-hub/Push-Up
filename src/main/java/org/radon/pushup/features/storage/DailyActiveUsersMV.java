@@ -14,10 +14,11 @@ public class DailyActiveUsersMV implements ClickHouseEntity {
                 AS
                 SELECT
                     tenant_id,
+                    app_id,
                     event_date,
                     countDistinct(user_id) AS users
                 FROM events
-                GROUP BY tenant_id, event_date;
+                GROUP BY tenant_id,app_id, event_date;
                 """;
     }
 }

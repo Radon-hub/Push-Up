@@ -28,18 +28,58 @@ public class AnalyticsJDBCRepository {
     }
 
     public long countEvents(UUID tenantId, String eventName, Instant start, Instant end) {
-        String sql = "SELECT count() FROM events WHERE tenant_id = ? AND event_name = ? AND event_time BETWEEN ? AND ?";
+
+        //TODO : We replace the old way of counting events with newer one with an aggregated table
+
+//        String sql = "SELECT count() FROM events WHERE tenant_id = ? AND event_name = ? AND event_time BETWEEN ? AND ?";
+//
+        String sql = "SELECT sum(count) FROM events_hourly WHERE tenant_id = ? AND event_name = ? AND bucket_start BETWEEN ? AND ?";
+
         return jdbcTemplate.queryForObject(sql, Long.class, tenantId, eventName, start, end);
     }
 
     public List<TimeSeriesPointResponse> eventTimeSeries(UUID tenantId, String eventName,
                                                          Instant start, Instant end,
                                                          String interval) {
-        String timeFunc = interval.equals("hour") ? "toStartOfHour(event_time)" : "toStartOfDay(event_time)";
-        String sql = String.format("SELECT %s AS ts, count() AS cnt FROM events WHERE tenant_id = ? AND event_name = ? AND event_time BETWEEN ? AND ? GROUP BY ts ORDER BY ts", timeFunc);
-        return jdbcTemplate.query(sql,
+
+//TODO : We replace the old way of counting events with newer one with an aggregated table
+
+//        String timeFunc = interval.equals("hour") ? "toStartOfHour(event_time)" : "toStartOfDay(event_time)";
+//        String sql = String.format("SELECT %s AS ts, count() AS cnt FROM events WHERE tenant_id = ? AND event_name = ? AND event_time BETWEEN ? AND ? GROUP BY ts ORDER BY ts", timeFunc);
+//        return jdbcTemplate.query(sql,
+//                new Object[]{tenantId, eventName, start, end},
+//                (rs, rowNum) -> new TimeSeriesPointResponse(rs.getTimestamp("ts").toInstant(), rs.getLong("cnt")));
+
+        String table = interval.equals("hour")
+                ? "events_hourly"
+                : "events_daily";
+
+        String timeColumn = interval.equals("hour")
+                ? "bucket_start"
+                : "event_date";
+
+        String sql = String.format("""
+        SELECT %s AS ts,
+               sum(count) AS cnt
+        FROM %s
+        WHERE tenant_id = ?
+          AND event_name = ?
+          AND %s BETWEEN ? AND ?
+        GROUP BY ts
+        ORDER BY ts
+        """, timeColumn, table, timeColumn);
+
+        return jdbcTemplate.query(
+                sql,
                 new Object[]{tenantId, eventName, start, end},
-                (rs, rowNum) -> new TimeSeriesPointResponse(rs.getTimestamp("ts").toInstant(), rs.getLong("cnt")));
+                (rs, rowNum) ->
+                        new TimeSeriesPointResponse(
+                                rs.getTimestamp("ts").toInstant(),
+                                rs.getLong("cnt")
+                        )
+        );
+
+
     }
 
     public List<EventResponse> userTimeline(UUID tenantId, String userId) {
@@ -187,15 +227,21 @@ public class AnalyticsJDBCRepository {
             throw new IllegalArgumentException("Unsupported breakdown column");
         }
 
+// TODO : We replace the old way of counting events with newer one with an aggregated table
+
+//        String sql = """
+//          SELECT %s AS key, count() AS cnt
+//          FROM events
+
         String sql = """
-        SELECT %s AS key, count() AS cnt
-        FROM events
-        WHERE tenant_id = ?
-          AND event_name = ?
-          AND event_time BETWEEN ? AND ?
-        GROUP BY key
-        ORDER BY cnt DESC
-        """.formatted(column);
+            SELECT %s AS key, sum(count) AS cnt
+            FROM events_hourly
+            WHERE tenant_id = ?
+              AND event_name = ?
+              AND bucket_start BETWEEN ? AND ?
+            GROUP BY key
+            ORDER BY cnt DESC
+            """.formatted(column);
 
         return jdbcTemplate.query(
                 sql,
