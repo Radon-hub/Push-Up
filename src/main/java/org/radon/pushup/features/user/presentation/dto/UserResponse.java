@@ -17,8 +17,8 @@ public class UserResponse {
     private String email;
     private String phone;
     private String role;
-    private Set<AppResponse> apps;
+//    private Set<AppResponse> apps;
+    private Set<String> relatedApps;
     private Timestamp created_at;
     private Timestamp updated_at;
-
 }

@@ -61,7 +61,6 @@ public class AppRepositoryImp implements AppRepository {
 
     }
 
-    @Transactional
     @Override
     public App updateAppStatus(AppStatus appStatus, UUID appId) {
 
