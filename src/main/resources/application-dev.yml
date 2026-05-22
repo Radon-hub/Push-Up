@@ -35,8 +35,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   # Kafka event bus configurations
   kafka:
-#    bootstrap-servers: localhost:9097
-    bootstrap-servers: localhost:9097,localhost:9098,localhost:9099
+    bootstrap-servers: localhost:9097
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -97,4 +96,4 @@ app:
       kafka_poll_timeout_ms: 500
   kafka:
     partitions: 8
-    replicas: 3
+    replicas: 1

@@ -38,8 +38,7 @@ spring:
   # Kafka event bus configurations
   # Kafka event bus configurations
   kafka:
-#    bootstrap-servers: localhost:9097
-    bootstrap-servers: localhost:9097,localhost:9098,localhost:9099
+    bootstrap-servers: localhost:9097
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -100,4 +99,4 @@ app:
       kafka_poll_timeout_ms: 500
   kafka:
     partitions: 8
-    replicas: 3
+    replicas: 1
