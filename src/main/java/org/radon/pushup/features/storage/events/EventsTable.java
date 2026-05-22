@@ -32,8 +32,10 @@ public class EventsTable implements ClickHouseEntity {
             ENGINE = MergeTree
             PARTITION BY (tenant_id, toYYYYMM(event_date))
             ORDER BY (tenant_id, app_id, event_name, event_time, event_id)
-            TTL event_time + INTERVAL 180 DAY
-            SETTINGS index_granularity = 8192;    
+            TTL event_time + INTERVAL 10 MINUTE TO VOLUME 'cold'
+            SETTINGS
+                index_granularity = 8192,
+                storage_policy = 'cold_policy';    
             """;
     }
 }

@@ -1,5 +1,6 @@
 package org.radon.pushup.shared.aop.config.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -30,21 +34,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-            String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-                if(SecurityContextHolder.getContext().getAuthentication()==null){
-                    var userDetails = jwtUtil.extractUser(token);
-                    if(jwtUtil.isTokenValid(token,userDetails)){
-                        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            try{
+                String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    String token = authHeader.substring(7);
+                    if(SecurityContextHolder.getContext().getAuthentication()==null){
+                        var userDetails = jwtUtil.extractUser(token);
+                        if(jwtUtil.isTokenValid(token,userDetails)){
+                            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authToken);
+                        }
                     }
+
                 }
 
+                filterChain.doFilter(request,response);
+            }catch(Exception ex){
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+
+                Map<String,Object> body = new LinkedHashMap<>();
+                ObjectMapper mapper = new ObjectMapper();
+
+                body.put("timestamp", Instant.now().toString());
+                body.put("status",HttpServletResponse.SC_UNAUTHORIZED);
+                body.put("error","Unauthorized");
+                body.put("message",ex.getMessage());
+                body.put("path",request.getServletPath());
+
+                mapper.writeValue(response.getOutputStream(),body);
             }
 
-            filterChain.doFilter(request,response);
     }
 
     @ExceptionHandler(ServletException.class)

@@ -1,0 +1,25 @@
+<clickhouse>
+    <storage_configuration>
+        <disks>
+            <s3_cold>
+                <type>s3</type>
+                <endpoint>http://minio:9000/pushup-cold-data</endpoint>
+                <access_key_id>tTXg8ks0et9pcdEWoEzi</access_key_id>
+                <secret_access_key>Xmi5UlgTSxoCqft5YdEIig5B5EbrzIKQpRnI6zYr</secret_access_key>
+                <region>us-east-1</region>
+            </s3_cold>
+        </disks>
+        <policies>
+            <cold_policy>
+                <volumes>
+                    <hot>
+                        <disk>default</disk>
+                    </hot>
+                    <cold>
+                        <disk>s3_cold</disk>
+                    </cold>
+                </volumes>
+            </cold_policy>
+        </policies>
+    </storage_configuration>
+</clickhouse>

@@ -25,7 +25,7 @@ public class EventsKafkaTable implements ClickHouseEntity {
             )
             ENGINE = Kafka
             SETTINGS
-                kafka_broker_list = 'kafka-1:29092,kafka-2:29092,kafka-3:29092',
+                kafka_broker_list = 'kafka:29092',
                 kafka_topic_list = 'events.enriched.v1',
                 kafka_group_name = 'clickhouse-events',
                 kafka_format = 'JSONAsString',
