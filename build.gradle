@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'org.Radon'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 description = 'PushUp'
 
 java {
@@ -27,8 +27,11 @@ repositories {
 dependencies {
     implementation 'org.apache.httpcomponents.core5:httpcore5:5.2'
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.2'
-    implementation 'com.clickhouse:clickhouse-jdbc:0.9.6'
+    implementation('com.clickhouse:clickhouse-jdbc:0.9.6') {
+        exclude group: 'at.yawk.lz4', module: 'lz4-java'
+    }
 
+    implementation 'org.lz4:lz4-java:1.8.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.apache.kafka:kafka-streams'
