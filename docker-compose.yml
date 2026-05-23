@@ -1,5 +1,44 @@
 services:
-
+  app:
+    build: .
+    container_name: push-up-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      minio:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - internal
+      - shared
+  postgres:
+    image: postgres:17
+    container_name: push-up-pg
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: pushup-db
+    volumes:
+      - pushup-pq-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   minio:
     image: minio/minio:latest
     container_name: pushup-minio
@@ -15,7 +54,11 @@ services:
     networks:
       - shared
       - internal
-
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
     image: redis:7-alpine
     container_name: pushup-redis
@@ -23,7 +66,13 @@ services:
       - 6379:6379
     volumes:
       - pushup-redis-data:/data
-
+    networks:
+      - internal
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   clickhouse:
     image: clickhouse:latest
@@ -38,6 +87,11 @@ services:
       - ./s3.xml:/etc/clickhouse-server/config.d/s3.xml
       - ./users.xml:/etc/clickhouse-server/users.d/users.xml:ro
       -  pushup-clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8123/ping" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -80,12 +134,21 @@ services:
     networks:
       - shared
       - internal
-
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "kafka-topics --bootstrap-server localhost:9092 --list > /dev/null 2>&1"
+        ]
+      interval: 20s
+      timeout: 10s
+      retries: 10
 
 volumes:
   minio_data:
   pushup-redis-data:
   pushup-clickhouse-data:
+  pushup-pq-data:
 
 networks:
   internal:

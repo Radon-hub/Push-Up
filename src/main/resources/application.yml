@@ -2,9 +2,7 @@ spring:
   application:
       name: PushUp
   profiles:
-    active: dev
-
-
+    active: docker
 logging:
   level:
     com:
