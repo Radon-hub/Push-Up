@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/pushup-logo.png" width="160"/>
+  <img src="pushup-logo.png" width="160"/>
 </p>
 
 # PushUp
