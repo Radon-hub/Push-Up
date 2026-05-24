@@ -1,0 +1,888 @@
+{
+  "info": {
+    "_postman_id": "6e3b3601-00c6-4239-a729-88c07577e98e",
+    "name": "PushUp",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4744208"
+  },
+  "item": [
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "\r",
+              "// Save access token\r",
+              "pm.collectionVariables.set(\"access_token\", response.access_token);\r",
+              "\r",
+              "// Save refresh token\r",
+              "pm.collectionVariables.set(\"refresh_token\", response.refresh_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "packages": {},
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"alireza.kh\",\r\n  \"password\": \"123456\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/auth/login",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Sign Up",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://{{Host}}/auth/sign-up",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "auth",
+            "sign-up"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Refresh Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const response = pm.response.json();\r",
+              "\r",
+              "// Save access token\r",
+              "pm.collectionVariables.set(\"access_token\", response.access_token);\r",
+              "\r",
+              "// Save refresh token\r",
+              "pm.collectionVariables.set(\"refresh_token\", response.refresh_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"refresh_token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYWVlZC5qYWZhcmkiLCJhdXRob3JpemF0aW9uIjp7InJvbGUiOiJPV05FUiIsImF1dGhvcml0aWVzIjpbeyJhdXRob3JpdHkiOiJSRUFEIn0seyJhdXRob3JpdHkiOiJVUERBVEUifSx7ImF1dGhvcml0eSI6IkFERCJ9LHsiYXV0aG9yaXR5IjoiQ1JFQVRFIn1dfSwiaWF0IjoxNzcwODgzNzkxLCJleHAiOjE3NzA4ODQ2OTF9.EmvUWk3mkjmgW3MeHFO4q59BxcMZIJT3csoq9eTooCc\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/auth/refresh-token",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "auth",
+            "refresh-token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"username\": \"mahdi.hosseini\",\r\n  \"password\": \"123444\",\r\n  \"email\": \"mahdi.ho@gmail.com\",\r\n  \"phone\": \"09361111115\",\r\n  \"role\": \"VIEWER\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/user",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "user"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Tenant",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"name\": \"Tanin\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/tenants/create",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tenants",
+            "create"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get User Tenant",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://{{Host}}/api/v1/tenants",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "tenants"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create New App",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Hyper Chat\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/apps",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "apps"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update App Status",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"status\": \"ACTIVE\",\r\n    \"appId\": {{app_id}}\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/apps/status",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "App Platform Toggle",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n        \"appId\": {{app_id}},\r\n        \"platform\" : \"WEB\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/apps/platform",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "platform"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add App User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n        \"appId\": {{app_id}},\r\n        \"userId\" : \"d4554c87-ebdc-473d-bd3d-414ca15d9208\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/apps/user",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "user"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Generate App Api Key",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n        \"appId\": \"{{app_id}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/apps/api-key/generate",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "api-key",
+            "generate"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Toggle API Key",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n        \"apiKeyId\": 102\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/apps/api-key/status/toggle",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "api-key",
+            "status",
+            "toggle"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Revoke API Key",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"apiKeyId\": \"\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/apps/api-key/revoke",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "api-key",
+            "revoke"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Rotate API Key",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"apiKeyId\": \"\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/v1/apps/api-key/rotate",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "apps",
+            "api-key",
+            "rotate"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Event",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"eventId\": \"0c0a6dc51a\",\r\n  \"userId\": \"6s6v88\",\r\n  \"eventName\": \"PRODUCT-VIEWD\",\r\n  \"platform\": \"ANDROID\",\r\n  \"location\": \"IR\",\r\n  \"properties\": {\r\n    \"from\": \"PDP\",\r\n    \"to\": \"PLP\",\r\n    \"product_id\": \"6v54sd89v4AAAc\",\r\n    \"variant_id\": \"68v1v2a33\",\r\n    \"zone\": \"TEHRAN\"\r\n    }\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/v1/event",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "v1",
+            "event"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics - Event Time",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/events/count?tenantId=d553e45e-eb8e-418f-858b-c3a472416897&eventName=PRODUCT_VIEWED&startTime=2026-02-01T00:00:00Z&endTime=2026-02-07T23:59:59Z",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "events",
+            "count"
+          ],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "d553e45e-eb8e-418f-858b-c3a472416897"
+            },
+            {
+              "key": "eventName",
+              "value": "PRODUCT_VIEWED"
+            },
+            {
+              "key": "startTime",
+              "value": "2026-02-01T00:00:00Z"
+            },
+            {
+              "key": "endTime",
+              "value": "2026-02-07T23:59:59Z"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / Time Series",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "{{api_key}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenant_id\": \"d553e45e-eb8e-418f-858b-c3a472416897\",\r\n    \"event_name\": \"PRODUCT_VIEWED\",\r\n    \"start_time\": \"2026-02-01T00:00:00Z\",\r\n    \"end_time\": \"2026-02-15T23:59:59Z\",\r\n    \"interval\": \"hour\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/events/timeseries",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "events",
+            "timeseries"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / User TimeLine",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/events/{{user_id}}/timeline?tenantId=d553e45e-eb8e-418f-858b-c3a472416897&eventName=PRODUCT_VIEWED&startTime=2026-01-30T00:00:00Z&endTime=2026-02-07T00:00:00Z&interval=hour",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "events",
+            "{{user_id}}",
+            "timeline"
+          ],
+          "query": [
+            {
+              "key": "tenantId",
+              "value": "d553e45e-eb8e-418f-858b-c3a472416897"
+            },
+            {
+              "key": "eventName",
+              "value": "PRODUCT_VIEWED"
+            },
+            {
+              "key": "startTime",
+              "value": "2026-01-30T00:00:00Z"
+            },
+            {
+              "key": "endTime",
+              "value": "2026-02-07T00:00:00Z"
+            },
+            {
+              "key": "interval",
+              "value": "hour"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / Retention",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenant_id\": \"d553e45e-eb8e-418f-858b-c3a472416897\",\r\n    \"cohort_event\": \"LOGOUT\",\r\n    \"cohort_date\": \"2026-01-31T00:00:00Z\",\r\n    \"days\": 15\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/retention",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "retention"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / Break Down by Dimentions",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenant_id\": \"d553e45e-eb8e-418f-858b-c3a472416897\",\r\n    \"event_name\": \"LOGIN\",\r\n    \"column\": \"location\",\r\n    \"start_time\": \"2026-02-01T00:00:00Z\",\r\n    \"end_time\": \"2026-02-15T23:59:59Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/breakdown/column",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "breakdown",
+            "column"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / Break Down by Property",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenant_id\": \"d553e45e-eb8e-418f-858b-c3a472416897\",\r\n    \"event_name\": \"LOGIN\",\r\n    \"column\": \"from\",\r\n    \"start_time\": \"2026-02-01T00:00:00Z\",\r\n    \"end_time\": \"2026-02-15T23:59:59Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/breakdown/property",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "breakdown",
+            "property"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Analytics / Funnel",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenant_id\": \"d553e45e-eb8e-418f-858b-c3a472416897\",\r\n    \"start_time\": \"2026-02-09T00:00:00Z\",\r\n    \"end_time\": \"2026-02-13T23:59:59Z\",\r\n    \"steps\": [\"LOGIN\",\"PRODUCT_VIEWED\",\"LOG_OUT\"],\r\n    \"window_seconds\": 1200\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://{{Host}}/api/v1/analytics/funnel",
+          "protocol": "http",
+          "host": [
+            "{{Host}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "analytics",
+            "funnel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Metrics / Phrometheus",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "Host",
+      "value": ""
+    },
+    {
+      "key": "User",
+      "value": ""
+    },
+    {
+      "key": "Password",
+      "value": ""
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "app_id",
+      "value": ""
+    },
+    {
+      "key": "api_key",
+      "value": ""
+    },
+    {
+      "key": "eventId",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "eventName",
+      "value": ""
+    },
+    {
+      "key": "platform",
+      "value": ""
+    },
+    {
+      "key": "location",
+      "value": ""
+    },
+    {
+      "key": "appVersion",
+      "value": ""
+    },
+    {
+      "key": "device",
+      "value": ""
+    },
+    {
+      "key": "eventTime",
+      "value": ""
+    },
+    {
+      "key": "properties",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": ""
+    }
+  ]
+}
