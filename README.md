@@ -410,18 +410,26 @@ This will start:
 
 ## API Collection
 
-A Postman collection is included for testing:
+PushUp includes two Postman collections to simplify testing, onboarding, and local development.
 
+1. Main API Collection
+   
 * Tenant management
 * App management
 * API key lifecycle
 * Event ingestion
 * Analytics endpoints
 
+2. Event Generator Collection
+
+A dedicated Postman collection for generating high-volume fake event traffic.
+
 Import the collection from:
 
 ```text
-/postman-collection
+/postman
+├── pushup-api-collection.json
+└── pushup-event-generator.json
 ```
 
 ---
