@@ -360,15 +360,27 @@ Used for:
 
 ```text
 pushup/
-├── ingestion-service/
-├── enrichment-service/
-├── analytics-service/
-├── common/
-├── docker/
-├── postgres/
-├── clickhouse/
-├── kafka/
-├── minio/
+├── features/
+    ├── analytics (Same packaging for all features)
+        ├── application
+        ├── domain
+        ├── infrastructure
+        ├── presentation
+    ├── app
+    ├── event
+    ├── storage (Clickhouse tables and views)
+    ├── tenant
+    ├── user
+├── shared/
+    ├── aop
+        ├── annotation
+        ├── config
+            ├── datasources
+            ├── filters
+        ├── errorHandling
+        ├── exceptionHandling
+    ├── apikeys
+    ├── dto
 ├── postman-collection/
 └── docker-compose.yml
 ```
