@@ -387,7 +387,7 @@ pushup/
 ### Clone Repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Radon-hub/Push-Up.git
 cd pushup
 ```
 
@@ -532,3 +532,6 @@ License details will be added in the future.
 ## Author
 
 Built as a deep backend engineering project focused on distributed systems, event processing, analytics infrastructure, and customer engagement architecture.
+
+Built with ❤️ for the open-source community.
+— Alireza Kherazani / Radon
